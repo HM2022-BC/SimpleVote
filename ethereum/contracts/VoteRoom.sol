@@ -53,22 +53,13 @@ contract VoteRoom {
     * @param description description for the whole room
     * @param newVoters a list of addresses of whitelisted voters
     */
-    constructor (address author, string memory description, address[] newVoters) public {
+    constructor (address author, string memory description, address[] memory newVoters) public {
         manager = author;
         voteRoomDescription = description;
-        for (uint256 index = 0; index < invitedVoters.length; index++) {
+        for (uint256 index = 0; index < newVoters.length; index++) {
             invitedVoters[newVoters[index]] = true;
             voterCount++;
         }
     }
-
-    /**
-    * @dev constructor that without any whitelisted voters
-    * @param author manager of the new vote room
-    * @param description description for the whole room
-    */
-    constructor (address author, string memory description) public {
-        manager = author;
-        voteRoomDescription = description;
-    }
 }
+
