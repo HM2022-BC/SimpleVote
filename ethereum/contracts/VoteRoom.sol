@@ -45,4 +45,30 @@ contract VoteRoom {
         require(invitedVoters[msg.sender]);
         _;
     }
+
+
+    /**
+    * @dev constructor that already takes new voters
+    * @param author manager of the new vote room
+    * @param description description for the whole room
+    * @param newVoters a list of addresses of whitelisted voters
+    */
+    constructor (address author, string memory description, address[] newVoters) public {
+        manager = author;
+        voteRoomDescription = description;
+        for (uint256 index = 0; index < invitedVoters.length; index++) {
+            invitedVoters[newVoters[index]] = true;
+            voterCount++;
+        }
+    }
+
+    /**
+    * @dev constructor that without any whitelisted voters
+    * @param author manager of the new vote room
+    * @param description description for the whole room
+    */
+    constructor (address author, string memory description) public {
+        manager = author;
+        voteRoomDescription = description;
+    }
 }
