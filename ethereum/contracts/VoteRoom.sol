@@ -61,5 +61,16 @@ contract VoteRoom {
             voterCount++;
         }
     }
-}
 
+
+    /**
+    * @dev Invite new voters after creation
+    * @param newVoters array of addresses of newly whitelisted voters
+    */
+    function inviteVoters(address[] memory newVoters) public managerGuard {
+        for (uint256 index = 0; index < newVoters.length; index++) {
+            invitedVoters[newVoters[index]] = true;
+            voterCount++;
+        }
+    }
+}
