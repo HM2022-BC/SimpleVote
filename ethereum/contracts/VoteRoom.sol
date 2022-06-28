@@ -5,16 +5,15 @@ pragma solidity >=0.5.0 <0.8.0;
 /// @author Group 3 (Jonas Buse, Emir Simsek, Felix Pollok, Michael Meissner)
 /// @notice A smart contract that lets managers create new votes which either designated adresses can partake in, or which everybody can use
 contract VoteRoom {
-
     /// A single vote which can be public or private
     struct VoteData {
         string description;
         bool isFinalized;
-        mapping(address=>bool) hasVoted;
-        uint inFavor;
-        uint againt;
-        uint abstain;
-        uint minimumVotes;
+        mapping(address => bool) hasVoted;
+        uint256 inFavor;
+        uint256 against;
+        uint256 abstain;
+        uint256 minimumVotes;
         bool isPublic;
     }
 
@@ -22,17 +21,16 @@ contract VoteRoom {
     address public manager;
 
     /// Mapping of all whitelisted voters
-    mapping(address=>bool) public invitedVoters;
+    mapping(address => bool) public invitedVoters;
 
     /// Number of whitelisted voters
-    uint public voterCount;
+    uint256 public voterCount;
 
     /// Array of votes
     VoteData[] public votes;
 
     /// Description of the room
     string public voteRoomDescription;
-
 
     /// Only the manager can access
     modifier managerGuard() {
@@ -46,14 +44,17 @@ contract VoteRoom {
         _;
     }
 
-
     /**
-    * @dev constructor that already takes new voters
-    * @param author manager of the new vote room
-    * @param description description for the whole room
-    * @param newVoters a list of addresses of whitelisted voters
-    */
-    constructor (address author, string memory description, address[] memory newVoters) public {
+     * @dev constructor that already takes new voters
+     * @param author manager of the new vote room
+     * @param description description for the whole room
+     * @param newVoters a list of addresses of whitelisted voters
+     */
+    constructor(
+        address author,
+        string memory description,
+        address[] memory newVoters
+    ) public {
         manager = author;
         voteRoomDescription = description;
         for (uint256 index = 0; index < newVoters.length; index++) {
@@ -62,11 +63,10 @@ contract VoteRoom {
         }
     }
 
-
     /**
-    * @dev Invite new voters after creation
-    * @param newVoters array of addresses of newly whitelisted voters
-    */
+     * @dev Invite new voters after creation
+     * @param newVoters array of addresses of newly whitelisted voters
+     */
     function inviteVoters(address[] memory newVoters) public managerGuard {
         for (uint256 index = 0; index < newVoters.length; index++) {
             invitedVoters[newVoters[index]] = true;
