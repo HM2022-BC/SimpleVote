@@ -100,6 +100,18 @@ contract VoteRoom {
     }
 
     /**
+     * @dev The manager can create a new Vote with minimVotes of 0
+     * @param description of the singular vote
+     * @param isPublic boolean if this vote should be restricted to the whitlist of available to the public
+     */
+    function createVote(string memory description, bool isPublic)
+        public
+        managerGuard
+    {
+        createVote(description, 0, isPublic);
+    }
+
+    /**
      * @param voteId the id of the vote to be voted in favor
      */
     function voteInFavor(uint256 voteId) public voterGuard(voteId) {
