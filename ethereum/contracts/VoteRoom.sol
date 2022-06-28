@@ -99,7 +99,7 @@ contract VoteRoom {
         string memory description,
         uint256 minimumVotes,
         bool isPublic
-    ) public managerGuard {
+    ) public managerGuard returns (uint256 voteId) {
         VoteData memory newVote = VoteData({
             description: description,
             isFinalized: false,
@@ -110,6 +110,7 @@ contract VoteRoom {
             isPublic: isPublic
         });
         votes.push(newVote);
+        return votes.length - 1;
     }
 
     /**
@@ -120,8 +121,10 @@ contract VoteRoom {
     function createVote(string memory description, bool isPublic)
         public
         managerGuard
+        returns (uint256 voteId)
     {
         createVote(description, 0, isPublic);
+        return votes.length - 1;
     }
 
     /**
@@ -158,5 +161,27 @@ contract VoteRoom {
         minimumVotesGuard(voteId)
     {
         votes[voteId].isFinalized = true;
+    }
+
+    /**
+     * @dev get result of a vote
+     * @param voteId the id of the vote to be shown
+     */
+    function getResult(uint256 voteId)
+        public
+        view
+        returns (
+            uint256 inFavor,
+            uint256 against,
+            uint256 abstain,
+            bool isFinalized
+        )
+    {
+        return (
+            votes[voteId].inFavor,
+            votes[voteId].against,
+            votes[voteId].abstain,
+            votes[voteId].isFinalized
+        );
     }
 }
