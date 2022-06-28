@@ -38,11 +38,24 @@ contract VoteRoom {
         _;
     }
 
-    /// Only a whitelisted voter can access if the vote is not public
+    /// Only a whitelisted voter can access if the vote is not public on a non finalized vote only once
     modifier voterGuard(uint256 voteId) {
         if (votes.length < voteId && !votes[voteId].isPublic) {
             require(invitedVoters[msg.sender]);
         }
+        require(!votes[voteId].isFinalized);
+        require(!votes[voteId].hasVoted[msg.sender]);
+        _;
+    }
+
+    /// Only allow if more than the minimum amount of votes are cast
+    modifier minimumVotesGuard(uint256 voteId) {
+        require(
+            votes[voteId].inFavor +
+                votes[voteId].against +
+                votes[voteId].abstain >=
+                votes[voteId].minimumVotes
+        );
         _;
     }
 
@@ -133,5 +146,13 @@ contract VoteRoom {
     function voteAbstain(uint256 voteId) public voterGuard(voteId) {
         votes[voteId].abstain++;
         votes[voteId].hasVoted[msg.sender] = true;
+    }
+
+    function finalizeVote(uint256 voteId)
+        public
+        managerGuard
+        minimumVotesGuard(voteId)
+    {
+        votes[voteId].isFinalized = true;
     }
 }
