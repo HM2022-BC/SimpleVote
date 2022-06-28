@@ -50,12 +50,7 @@ contract VoteRoom {
 
     /// Only allow if more than the minimum amount of votes are cast
     modifier minimumVotesGuard(uint256 voteId) {
-        require(
-            votes[voteId].inFavor +
-                votes[voteId].against +
-                votes[voteId].abstain >=
-                votes[voteId].minimumVotes
-        );
+        require(getVoteCount(voteId) >= votes[voteId].minimumVotes);
         _;
     }
 
@@ -183,5 +178,14 @@ contract VoteRoom {
             votes[voteId].abstain,
             votes[voteId].isFinalized
         );
+    }
+
+    /**
+     *@dev get number of votes on a specific vote
+     *@param voteId the id of the vote to be shown
+     */
+    function getVoteCount(uint256 voteId) public view returns (uint256 count) {
+        VoteData memory vote = votes[voteId];
+        return vote.abstain + vote.inFavor + vote.against;
     }
 }
