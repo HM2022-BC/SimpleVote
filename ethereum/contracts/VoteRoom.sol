@@ -73,4 +73,27 @@ contract VoteRoom {
             voterCount++;
         }
     }
+
+    /**
+     * @dev The manager can create a new Vote with all possible inputs
+     * @param description of the singular vote
+     * @param minimumVotes the number of the minimum amount of votes
+     * @param isPublic boolean if this vote should be restricted to the whitlist of available to the public
+     */
+    function createVote(
+        string memory description,
+        uint256 minimumVotes,
+        bool isPublic
+    ) public managerGuard {
+        VoteData memory newVote = VoteData({
+            description: description,
+            isFinalized: false,
+            inFavor: 0,
+            against: 0,
+            abstain: 0,
+            minimumVotes: minimumVotes,
+            isPublic: isPublic
+        });
+        votes.push(newVote);
+    }
 }
