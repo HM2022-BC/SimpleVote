@@ -7,7 +7,7 @@ import { Router } from '../../routes';
 
 class VoteNew extends Component {
   state = {
-    minimumContribution: '',
+    voteroomName: '',
     errorMessage: '',
     loading: false
   };
@@ -36,23 +36,21 @@ class VoteNew extends Component {
   render() {
     return (
       <Layout>
-        <h3>Create a new Vote</h3>
+        <h3>Create a new Voteroom</h3>
 
         <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
           <Form.Field>
-            <label>Minimum Contribution</label>
+            <label>Name of the Voteroom</label>
             <Input
-              label="wei"
-              labelPosition="right"
-              value={this.state.minimumContribution}
+              value={this.state.voteroomName}
               onChange={event =>
-                this.setState({ minimumContribution: event.target.value })}
+                this.setState({ voteroomName: event.target.value })}
             />
           </Form.Field>
 
           <Message error header="Oops!" content={this.state.errorMessage} />
           <Button loading={this.state.loading} primary>
-            Create Vote
+            Create Voteroom
           </Button>
         </Form>
       </Layout>
