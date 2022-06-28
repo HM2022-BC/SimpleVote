@@ -38,9 +38,11 @@ contract VoteRoom {
         _;
     }
 
-    /// Only a whitelisted voter can access
-    modifier voterGuard() {
-        require(invitedVoters[msg.sender]);
+    /// Only a whitelisted voter can access if the vote is not public
+    modifier voterGuard(uint256 voteId) {
+        if (votes.length < voteId && !votes[voteId].isPublic) {
+            require(invitedVoters[msg.sender]);
+        }
         _;
     }
 
@@ -95,5 +97,29 @@ contract VoteRoom {
             isPublic: isPublic
         });
         votes.push(newVote);
+    }
+
+    /**
+     * @param voteId the id of the vote to be voted in favor
+     */
+    function voteInFavor(uint256 voteId) public voterGuard(voteId) {
+        votes[voteId].inFavor++;
+        votes[voteId].hasVoted[msg.sender] = true;
+    }
+
+    /**
+     * @param voteId the id of the vote to be voted against
+     */
+    function voteAgainst(uint256 voteId) public voterGuard(voteId) {
+        votes[voteId].against++;
+        votes[voteId].hasVoted[msg.sender] = true;
+    }
+
+    /**
+     * @param voteId the id of the vote to be voted abstain
+     */
+    function voteAbstain(uint256 voteId) public voterGuard(voteId) {
+        votes[voteId].abstain++;
+        votes[voteId].hasVoted[msg.sender] = true;
     }
 }
