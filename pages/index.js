@@ -31,9 +31,9 @@ class CampaignIndex extends Component {
     return (
       <Layout>
         <div>
-          <h3>Open Votes</h3>
+          <h3>Open Voterooms</h3>
 
-          <Link route="/votes/votes_new">
+          <Link route="/votes/newVoteroom">
             <a>
               <Button
                 floated="right"
