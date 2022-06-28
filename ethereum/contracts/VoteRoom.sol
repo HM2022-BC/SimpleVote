@@ -148,6 +148,10 @@ contract VoteRoom {
         votes[voteId].hasVoted[msg.sender] = true;
     }
 
+    /**
+     * @dev The manager can finalize a vote
+     * @param voteId the id of the vote to be finalized
+     */
     function finalizeVote(uint256 voteId)
         public
         managerGuard
