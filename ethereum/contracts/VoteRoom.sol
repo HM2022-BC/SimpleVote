@@ -33,4 +33,16 @@ contract VoteRoom {
     /// Description of the room
     string public voteRoomDescription;
 
+
+    /// Only the manager can access
+    modifier managerGuard() {
+        require(msg.sender == manager);
+        _;
+    }
+
+    /// Only a whitelisted voter can access
+    modifier voterGuard() {
+        require(invitedVoters[msg.sender]);
+        _;
+    }
 }
