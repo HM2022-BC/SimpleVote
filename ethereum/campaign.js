@@ -1,6 +1,6 @@
 import web3 from './web3';
-import Campaign from './build/contracts/CrowdCollab.json';
+import VoteRoom from './build/contracts/VoteRoom.json';
 
 export default address => {
-    return new web3.eth.Contract(Campaign.abi, address);
+    return new web3.eth.Contract(VoteRoom.abi, address);
 };
