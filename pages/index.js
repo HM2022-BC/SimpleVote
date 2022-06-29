@@ -4,20 +4,20 @@ import factory from '../ethereum/factory';
 import Layout from '../components/Layout';
 import { Link } from '../routes';
 
-class CampaignIndex extends Component {
+class VoteRoomOverview extends Component {
   static async getInitialProps() {
-    const campaigns = await factory.methods.getAllVoteRooms().call();
+    const voteRooms = await factory.methods.getAllVoteRooms().call();
 
-    return { campaigns };
+    return { voteRooms };
   }
 
-  renderCampaigns() {
-    const items = this.props.campaigns.map(address => {
+  renderVoteRooms() {
+    const items = this.props.voteRooms.map(address => {
       return {
         header: address,
         description: (
-          <Link route={`/campaigns/${address}`}>
-            <a>View Campaign</a>
+          <Link route={`/voteroom/${address}`}>
+            <a>View Room</a>
           </Link>
         ),
         fluid: true
@@ -31,23 +31,23 @@ class CampaignIndex extends Component {
     return (
       <Layout>
         <div>
-          <h3>Open Voterooms</h3>
+          <h3>Open VoteRooms</h3>
 
           <Link route="/voteRoom/newVoteroom">
             <a>
               <Button
                 floated="right"
-                content="Create Voteroom"
+                content="Create VoteRoom"
                 icon="add circle"
                 primary
               />
             </a>
           </Link>
 
-          {this.renderCampaigns()}
+          {this.renderVoteRooms()}
         </div>
       </Layout>
     );
   }
 }
-export default CampaignIndex;
+export default VoteRoomOverview;
