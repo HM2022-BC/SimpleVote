@@ -1,68 +1,62 @@
 import React, { Component } from 'react';
 import { Card, Grid, Button } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
-import Campaign from '../../ethereum/voteRoom';
-import web3 from '../../ethereum/web3';
+import VoteRoom from '../../ethereum/voteRoom';
 import ContributeForm from '../../components/ContributeForm';
 import { Link } from '../../routes';
 
-class CampaignShow extends Component {
+class VoteRoomShow extends Component {
   static async getInitialProps(props) {
-    const campaign = Campaign(props.query.address);
+    const voteRoom = VoteRoom(props.query.address);
 
-    const summary = await campaign.methods.getSummary().call();
+    const description = await voteRoom.methods.voteRoomDescription().call();
+    const voterCount = await voteRoom.methods.voterCount().call();
+    const manager = await voteRoom.methods.manager().call();
+    const voteNumber = await voteRoom.methods.getVoteCount().call();
 
     return {
       address: props.query.address,
-      minimumContribution: summary[0],
-      balance: summary[1],
-      requestsCount: summary[2],
-      approversCount: summary[3],
-      manager: summary[4]
+      description,
+      manager,
+      voterCount,
+      voteNumber,
     };
   }
 
   renderCards() {
     const {
-      balance,
       manager,
-      minimumContribution,
-      requestsCount,
-      approversCount
+      description,
+      voterCount,
+      voteNumber,
     } = this.props;
 
     const items = [
       {
         header: manager,
-        meta: 'Address of Manager',
+        meta: 'Manager Address',
         description:
-          'The manager created this campaign and can create requests to withdraw money',
+          'The manager created this campaign, can create new votes and finalize them.',
         style: { overflowWrap: 'break-word' }
       },
       {
-        header: minimumContribution,
-        meta: 'Minimum Contribution (wei)',
+        header: description,
+        meta: 'Description',
         description:
-          'You must contribute at least this much wei to become an approver'
+          'Description of the VoteRoom (set by the manager).'
       },
       {
-        header: requestsCount,
-        meta: 'Number of Requests',
+        header: voterCount,
+        meta: 'Voters',
         description:
-          'A request tries to withdraw money from the contract. Requests must be approved by approvers'
+          'Number of whitelisted voters.'
       },
       {
-        header: approversCount,
-        meta: 'Number of Approvers',
+        header: voteNumber,
+        meta: 'Votes',
         description:
-          'Number of people who have already donated to this campaign'
+          'Number of open and closed votes.'
       },
-      {
-        header: web3.utils.fromWei(balance, 'ether'),
-        meta: 'Campaign Balance (ether)',
-        description:
-          'The balance is how much money this campaign has left to spend.'
-      }
     ];
 
     return <Card.Group items={items} />;
@@ -71,21 +65,17 @@ class CampaignShow extends Component {
   render() {
     return (
       <Layout>
-        <h3>Campaign Show</h3>
+        <h3>VoteRoom Show</h3>
         <Grid>
           <Grid.Row>
-            <Grid.Column width={10}>{this.renderCards()}</Grid.Column>
-
-            <Grid.Column width={6}>
-              <ContributeForm address={this.props.address} />
-            </Grid.Column>
+            <Grid.Column >{this.renderCards()}</Grid.Column>
           </Grid.Row>
 
           <Grid.Row>
             <Grid.Column>
-              <Link route={`/campaigns/${this.props.address}/requests`}>
+              <Link route={`/voteroom/${this.props.address}/votes`}>
                 <a>
-                  <Button primary>View Requests</Button>
+                  <Button primary>View Votes</Button>
                 </a>
               </Link>
             </Grid.Column>
@@ -96,4 +86,4 @@ class CampaignShow extends Component {
   }
 }
 
-export default CampaignShow;
+export default VoteRoomShow;
