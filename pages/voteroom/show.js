@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Card, Grid, Button } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import VoteRoom from '../../ethereum/voteRoom';
-import ContributeForm from '../../components/ContributeForm';
 import { Link } from '../../routes';
 
 class VoteRoomShow extends Component {
