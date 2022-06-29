@@ -1,9 +1,9 @@
 const routes = require('next-routes')();
 
 routes
-  .add('/votes/newVoteroom', '/votes/newVoteroom')
-  .add('/campaigns/:address', '/campaigns/show')
-  .add('/campaigns/:address/requests', '/campaigns/requests/index')
-  .add('/campaigns/:address/requests/new', '/campaigns/requests/new');
+  .add('/voteRoom/newVoteroom', '/voteRoom/newVoteroom')
+  .add('/voteRoom/:address', '/voteRoom/show')
+  .add('/voteRoom/:address/vote', '/voteRoom/vote/index')
+  .add('/voteRoom/:address/vote/new', '/voteRoom/vote/new');
 
 module.exports = routes;

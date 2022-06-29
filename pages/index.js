@@ -37,7 +37,7 @@ class CampaignIndex extends Component {
             <a>
               <Button
                 floated="right"
-                content="Create Vote"
+                content="Create Voteroom"
                 icon="add circle"
                 primary
               />
