@@ -188,4 +188,11 @@ contract VoteRoom {
         VoteData memory vote = votes[voteId];
         return vote.abstain + vote.inFavor + vote.against;
     }
+
+    /**
+     * @dev get the number of votes
+     */
+    function getVoteCount() public view returns (uint256 count) {
+        return votes.length;
+    }
 }
