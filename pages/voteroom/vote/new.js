@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import { Form, Button, Message, Input } from 'semantic-ui-react';
-import Campaign from '../../../ethereum/voteRoom';
+import { Form, Button, Message, Input, Checkbox } from 'semantic-ui-react';
+import VoteRoom from '../../../ethereum/voteRoom';
 import web3 from '../../../ethereum/web3';
 import { Link, Router } from '../../../routes';
 import Layout from '../../../components/Layout';
 
-class RequestNew extends Component {
+class NewVote extends Component {
   state = {
-    value: '',
     description: '',
-    recipient: '',
-    loading: false,
+    minimumVotes: 0,
+    isPublic: false,
     errorMessage: ''
   };
 
@@ -23,18 +22,18 @@ class RequestNew extends Component {
   onSubmit = async event => {
     event.preventDefault();
 
-    const campaign = Campaign(this.props.address);
-    const { description, value, recipient } = this.state;
+    const voteRoom = VoteRoom(this.props.address);
+    const { description, minimumVotes, isPublic } = this.state;
 
     this.setState({ loading: true, errorMessage: '' });
 
     try {
-      const accounts = await web3.eth.getAccounts();
-      await campaign.methods
-        .createRequest(description, web3.utils.toWei(value, 'ether'), recipient)
+      const accounts = await web3.eth.requestAccounts();
+      await voteRoom.methods
+        .createVote(description, minimumVotes, isPublic)
         .send({ from: accounts[0] });
 
-      Router.pushRoute(`/campaigns/${this.props.address}/requests`);
+      Router.pushRoute(`/voteroom/${this.props.address}/votes`);
     } catch (err) {
       this.setState({ errorMessage: err.message });
     }
@@ -45,14 +44,15 @@ class RequestNew extends Component {
   render() {
     return (
       <Layout>
-        <Link route={`/campaigns/${this.props.address}/requests`}>
+        <Link route={`/voteroom/${this.props.address}/votes`}>
           <a>Back</a>
         </Link>
-        <h3>Create a Request</h3>
+        <h3>Create a new Vote</h3>
         <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
           <Form.Field>
             <label>Description</label>
             <Input
+              required
               value={this.state.description}
               onChange={event =>
                 this.setState({ description: event.target.value })}
@@ -60,19 +60,20 @@ class RequestNew extends Component {
           </Form.Field>
 
           <Form.Field>
-            <label>Value in Ether</label>
+            <label>Minimum Amount of Voters</label>
             <Input
-              value={this.state.value}
-              onChange={event => this.setState({ value: event.target.value })}
+              value={this.state.minimumVotes}
+              onChange={event => this.setState({ minimumVotes: event.target.value })}
             />
           </Form.Field>
 
           <Form.Field>
-            <label>Recipient</label>
-            <Input
-              value={this.state.recipient}
+            <label>Publicly Accessible?</label>
+            <Checkbox
+              toggle
+              checked={this.state.isPublic}
               onChange={event =>
-                this.setState({ recipient: event.target.value })}
+                this.setState({ isPublic: event.target.value })}
             />
           </Form.Field>
 
@@ -86,4 +87,4 @@ class RequestNew extends Component {
   }
 }
 
-export default RequestNew;
+export default NewVote;
