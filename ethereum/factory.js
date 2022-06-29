@@ -1,7 +1,7 @@
 import web3 from './web3';
 import RoomCreator from './build/contracts/RoomCreator.json';
 
-const roomCreatorAddress = "0xdA4f81243f08cF743e3587c52265670389EBa71A";
+const roomCreatorAddress = "0x3d5e6943F082e458da230385542309FBa9d14ab5";
 
 const instance = new web3.eth.Contract(RoomCreator.abi, roomCreatorAddress);
 

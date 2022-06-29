@@ -192,7 +192,7 @@ contract VoteRoom {
     /**
      * @dev get the number of votes
      */
-    function getVoteCount() public view returns (uint256 count) {
+    function getNumberOfVotes() public view returns (uint256 count) {
         return votes.length;
     }
 }

@@ -11,7 +11,7 @@ class VoteRoomShow extends Component {
     const description = await voteRoom.methods.voteRoomDescription().call();
     const voterCount = await voteRoom.methods.voterCount().call();
     const manager = await voteRoom.methods.manager().call();
-    const voteNumber = await voteRoom.methods.getVoteCount().call();
+    const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
 
     return {
       address: props.query.address,
