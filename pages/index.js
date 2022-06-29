@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Card, Button } from 'semantic-ui-react';
-//import factory from '../ethereum/factory';
+import factory from '../ethereum/factory';
 import Layout from '../components/Layout';
 import { Link } from '../routes';
 
 class CampaignIndex extends Component {
-  /*static async getInitialProps() {
-    const campaigns = await factory.methods.getDeployedCampaigns().call();
-    
+  static async getInitialProps() {
+    const campaigns = await factory.methods.getAllVoteRooms().call();
+
     return { campaigns };
   }
 
@@ -25,7 +25,7 @@ class CampaignIndex extends Component {
     });
 
     return <Card.Group items={items} />;
-  }*/
+  }
 
   render() {
     return (
@@ -44,10 +44,10 @@ class CampaignIndex extends Component {
             </a>
           </Link>
 
+          {this.renderCampaigns()}
         </div>
       </Layout>
     );
   }
 }
-// {this.renderCampaigns()} Zeile 47
 export default CampaignIndex;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Grid, Button } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
-import Campaign from '../../ethereum/campaign';
+import Campaign from '../../ethereum/voteRoom';
 import web3 from '../../ethereum/web3';
 import ContributeForm from '../../components/ContributeForm';
 import { Link } from '../../routes';
