@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Form, Button, Input, Message } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
-//import factory from '../../ethereum/factory';
-//import web3 from '../../ethereum/web3';
+import factory from '../../ethereum/factory';
+import web3 from '../../ethereum/web3';
 import { Router } from '../../routes';
 
-class VoteNew extends Component {
+class NewVoteRoom extends Component {
   state = {
-    voteroomName: '',
+    description: '',
+    invitedVoters: [],
     errorMessage: '',
     loading: false
   };
@@ -18,9 +19,15 @@ class VoteNew extends Component {
     this.setState({ loading: true, errorMessage: '' });
 
     try {
+      this.state.invitedVoters.forEach((address) => {
+        if (!web3.utils.isAddress(address.trim())) {
+          throw new Error(`Invalid address: ${address}`);
+        }
+      })
       const accounts = await web3.eth.requestAccounts();
+
       await factory.methods
-        .createCampaign(this.state.minimumContribution, "Test creating campaign")
+        .createRoom(this.state.description, this.state.invitedVoters)
         .send({
           from: accounts[0]
         });
@@ -36,15 +43,28 @@ class VoteNew extends Component {
   render() {
     return (
       <Layout>
-        <h3>Create a new Voteroom</h3>
+        <h3>Create a new VoteRoom</h3>
 
         <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
-          <Form.Field>
-            <label>Name of the Voteroom</label>
+          <Form.Field required>
+            <label>Description</label>
             <Input
-              value={this.state.voteroomName}
+              value={this.state.description}
               onChange={event =>
-                this.setState({ voteroomName: event.target.value })}
+                this.setState({ description: event.target.value })}
+            />
+          </Form.Field>
+
+          <Form.Field>
+            <label>Invite Voters</label>
+            <div style={{ fontSize: '10px', color: 'gray' }}>Comma Separated</div>
+            <Input
+              value={this.state.invitedVoters}
+              onChange={event =>
+                this.setState({ invitedVoters: event.target.value.split(',') })}
+              label="Addresses"
+              labelPosition="left"
+              placeholder="0x..."
             />
           </Form.Field>
 
@@ -53,9 +73,9 @@ class VoteNew extends Component {
             Create Voteroom
           </Button>
         </Form>
-      </Layout>
+      </Layout >
     );
   }
 }
 
-export default VoteNew;
+export default NewVoteRoom;
