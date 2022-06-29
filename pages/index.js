@@ -33,7 +33,7 @@ class VoteRoomOverview extends Component {
         <div>
           <h3>Open VoteRooms</h3>
 
-          <Link route="/voteRoom/newVoteroom">
+          <Link route="/voteroom/newvoteroom">
             <a>
               <Button
                 floated="right"
