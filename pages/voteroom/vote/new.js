@@ -73,7 +73,7 @@ class NewVote extends Component {
               toggle
               checked={this.state.isPublic}
               onChange={event =>
-                this.setState({ isPublic: event.target.value })}
+                this.setState({ isPublic: !this.state.isPublic })}
             />
           </Form.Field>
 
