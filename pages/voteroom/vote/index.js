@@ -2,36 +2,35 @@ import React, { Component } from 'react';
 import { Button, Table } from 'semantic-ui-react';
 import { Link } from '../../../routes';
 import Layout from '../../../components/Layout';
-import Campaign from '../../../ethereum/voteRoom';
-import RequestRow from '../../../components/RequestRow';
+import VoteRoom from '../../../ethereum/voteRoom';
+import VoteRow from '../../../components/VoteRow';
 
-class RequestIndex extends Component {
+class VoteIndex extends Component {
   static async getInitialProps(props) {
     const { address } = props.query;
-    const campaign = Campaign(address);
-    const requestCount = await campaign.methods.getRequestsCount().call();
-    const approversCount = await campaign.methods.numberSupporters().call();
+    const voteRoom = VoteRoom(address);
+    const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
+    const managerAddress = await voteRoom.methods.manager().call();
 
-    const requests = await Promise.all(
-      Array(parseInt(requestCount))
+    const votes = await Promise.all(
+      Array(parseInt(voteNumber))
         .fill()
-        .map((element, index) => {
-          return campaign.methods.requests(index).call();
+        .map((_, index) => {
+          return voteRoom.methods.votes(index).call();
         })
     );
 
-    return { address, requests, requestCount, approversCount };
+    return { address, votes, voteRoom, voteNumber, managerAddress };
   }
 
   renderRows() {
-    return this.props.requests.map((request, index) => {
+    return this.props.votes.map((vote, index) => {
       return (
-        <RequestRow
+        <VoteRow
+          address={this.props.managerAddress}
           key={index}
           id={index}
-          request={request}
-          address={this.props.address}
-          approversCount={this.props.approversCount}
+          vote={vote}
         />
       );
     });
@@ -42,11 +41,11 @@ class RequestIndex extends Component {
 
     return (
       <Layout>
-        <h3>Requests</h3>
-        <Link route={`/campaigns/${this.props.address}/requests/new`}>
+        <h3>Votes</h3>
+        <Link route={`/voteroom/${this.props.address}/votes/new`}>
           <a>
             <Button primary floated="right" style={{ marginBottom: 10 }}>
-              Add Request
+              Add Vote
             </Button>
           </a>
         </Link>
@@ -55,19 +54,20 @@ class RequestIndex extends Component {
             <Row>
               <HeaderCell>ID</HeaderCell>
               <HeaderCell>Description</HeaderCell>
-              <HeaderCell>Amount</HeaderCell>
-              <HeaderCell>Recipient</HeaderCell>
-              <HeaderCell>Approval Count</HeaderCell>
-              <HeaderCell>Approve</HeaderCell>
-              <HeaderCell>Finalize</HeaderCell>
+              <HeaderCell>Minimum Votes</HeaderCell>
+              <HeaderCell>In Favor</HeaderCell>
+              <HeaderCell>Against</HeaderCell>
+              <HeaderCell>Abstained</HeaderCell>
+              <HeaderCell>Is Public</HeaderCell>
+              <HeaderCell>Actions</HeaderCell>
             </Row>
           </Header>
           <Body>{this.renderRows()}</Body>
         </Table>
-        <div>Found {this.props.requestCount} requests.</div>
+        <div>Found {this.props.voteNumber} votes.</div>
       </Layout>
     );
   }
 }
 
-export default RequestIndex;
+export default VoteIndex;
