@@ -4,8 +4,12 @@ import web3 from '../ethereum/web3';
 import VoteRoom from '../ethereum/voteRoom';
 
 class VoteRow extends Component {
+  state = {
+    loading: false,
+  };
 
   act = async (action) => {
+    this.setState({ loading: true });
     const vote = VoteRoom(this.props.address);
 
     const accounts = await web3.eth.requestAccounts();
@@ -18,6 +22,8 @@ class VoteRow extends Component {
       await vote.methods.voteAbstain(this.props.id).send({ from: accounts[0] });
     else if (action === 'finalize')
       await vote.methods.finalizeVote(this.props.id).send({ from: accounts[0] });
+
+    this.setState({ loading: false });
   };
 
   render() {
@@ -40,22 +46,22 @@ class VoteRow extends Component {
         <Cell>{vote.isPublic ? '✔️' : '❌'}</Cell>
         <Cell>
           {vote.isFinalized ? null : (
-            <Button color="green" basic onClick={() => this.act('inFavor')}>
-              In Favor
-            </Button>
-          )}
-          {vote.isFinalized ? null : (
-            <Button color="red" basic onClick={() => this.act('against')}>
-              Against
-            </Button>
-          )}
-          {vote.isFinalized ? null : (
-            <Button color="brown" basic onClick={() => this.act('abstain')}>
-              Abstain
-            </Button>
+            <Button.Group>
+              <Button color="green" loading={this.state.loading} onClick={() => this.act('inFavor')}>
+                In Favor
+              </Button>
+              <Button.Or />
+              <Button color="red" loading={this.state.loading} onClick={() => this.act('against')}>
+                Against
+              </Button>
+              <Button.Or />
+              <Button color="brown" loading={this.state.loading} onClick={() => this.act('abstain')}>
+                Abstain
+              </Button>
+            </Button.Group>
           )}
           {!vote.isFinalized && readyToFinalize ? (
-            <Button color="teal" basic onClick={() => this.act('finalize')}>
+            <Button color="teal" floated='right' loading={this.state.loading} onClick={() => this.act('finalize')}>
               Finalize
             </Button>
           ) : null}
