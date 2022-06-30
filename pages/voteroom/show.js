@@ -13,12 +13,25 @@ class VoteRoomShow extends Component {
     const manager = await voteRoom.methods.manager().call();
     const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
 
+    const votes = await Promise.all(
+      Array(parseInt(voteNumber))
+        .fill()
+        .map((_, index) => {
+          return voteRoom.methods.votes(index).call();
+        })
+    );
+
+    const openVotes = votes.filter(vote => vote.isFinalized === false);
+    const publicOpenVotes = openVotes.filter(vote => vote.isPublic === true);
+
     return {
       address: props.query.address,
       description,
       manager,
       voterCount,
       voteNumber,
+      openVotes,
+      publicOpenVotes,
     };
   }
 
@@ -28,6 +41,8 @@ class VoteRoomShow extends Component {
       description,
       voterCount,
       voteNumber,
+      openVotes,
+      publicOpenVotes,
     } = this.props;
 
     const items = [
@@ -54,8 +69,14 @@ class VoteRoomShow extends Component {
         header: voteNumber,
         meta: 'Votes',
         description:
-          'Number of open and closed votes.'
+          'Number of total votes.'
       },
+      {
+        header: `${openVotes.length} (${publicOpenVotes.length} public)`,
+        meta: 'Open Votes',
+        description:
+          'Number of open votes.'
+      }
     ];
 
     return <Card.Group items={items} />;
