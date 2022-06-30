@@ -35,7 +35,7 @@ class VoteRow extends Component {
   render() {
     const { Row, Cell } = Table;
     const { id, vote } = this.props;
-    const readyToFinalize = vote.inFavor + vote.against + vote.abstain >= vote.minimumVotes;
+    const readyToFinalize = parseInt(vote.inFavor) + parseInt(vote.against) + parseInt(vote.abstain) >= parseInt(vote.minimumVotes);
 
     return (
       <Row
