@@ -22,4 +22,9 @@ contract RoomCreator {
         );
         voteRoomAddresses.push(newVoteRoom);
     }
+
+    /// get all vote rooms
+    function getAllVoteRooms() public view returns (address[] memory) {
+        return voteRoomAddresses;
+    }
 }

@@ -40,7 +40,7 @@ contract VoteRoom {
 
     /// Only a whitelisted voter can access if the vote is not public on a non finalized vote only once
     modifier voterGuard(uint256 voteId) {
-        if (votes.length < voteId && !votes[voteId].isPublic) {
+        if (!votes[voteId].isPublic) {
             require(invitedVoters[msg.sender]);
         }
         require(!votes[voteId].isFinalized);
@@ -79,6 +79,9 @@ contract VoteRoom {
      */
     function inviteVoters(address[] memory newVoters) public managerGuard {
         for (uint256 index = 0; index < newVoters.length; index++) {
+            if (invitedVoters[newVoters[index]]) {
+                continue;
+            }
             invitedVoters[newVoters[index]] = true;
             voterCount++;
         }
@@ -187,5 +190,12 @@ contract VoteRoom {
     function getVoteCount(uint256 voteId) public view returns (uint256 count) {
         VoteData memory vote = votes[voteId];
         return vote.abstain + vote.inFavor + vote.against;
+    }
+
+    /**
+     * @dev get the number of votes
+     */
+    function getNumberOfVotes() public view returns (uint256 count) {
+        return votes.length;
     }
 }
