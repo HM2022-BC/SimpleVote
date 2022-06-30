@@ -27,7 +27,7 @@ class VoteIndex extends Component {
     return this.props.votes.map((vote, index) => {
       return (
         <VoteRow
-          address={this.props.managerAddress}
+          address={this.props.address}
           key={index}
           id={index}
           vote={vote}
