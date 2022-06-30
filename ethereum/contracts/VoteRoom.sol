@@ -79,6 +79,9 @@ contract VoteRoom {
      */
     function inviteVoters(address[] memory newVoters) public managerGuard {
         for (uint256 index = 0; index < newVoters.length; index++) {
+            if (invitedVoters[newVoters[index]]) {
+                continue;
+            }
             invitedVoters[newVoters[index]] = true;
             voterCount++;
         }
