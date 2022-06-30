@@ -78,6 +78,13 @@ class VoteRoomShow extends Component {
                 </a>
               </Link>
             </Grid.Column>
+            <Grid.Column style={{ marginLeft: '20px' }}>
+              <Link route={`/voteroom/${this.props.address}/addvoters`}>
+                <a>
+                  <Button primary>Invite Voters</Button>
+                </a>
+              </Link>
+            </Grid.Column>
           </Grid.Row>
         </Grid>
       </Layout>

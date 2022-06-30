@@ -27,7 +27,7 @@ class NewVoteRoom extends Component {
       const accounts = await web3.eth.requestAccounts();
 
       await factory.methods
-        .createRoom(this.state.description, this.state.invitedVoters)
+        .createRoom(this.state.description, this.state.invitedVoters.map(e => e.trim()))
         .send({
           from: accounts[0]
         });
@@ -64,7 +64,7 @@ class NewVoteRoom extends Component {
                 this.setState({ invitedVoters: event.target.value.split(',') })}
               label="Addresses"
               labelPosition="left"
-              placeholder="0x..."
+              placeholder="0x... , 0x..."
             />
           </Form.Field>
 
