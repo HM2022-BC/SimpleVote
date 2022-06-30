@@ -24,16 +24,17 @@ class VoteIndex extends Component {
   }
 
   renderRows() {
-    return this.props.votes.map((vote, index) => {
-      return (
-        <VoteRow
-          address={this.props.address}
-          key={index}
-          id={index}
-          vote={vote}
-        />
-      );
-    });
+    return this.props.votes.sort((a, b) => Number(a.isFinalized) - Number(b.isFinalized))
+      .map((vote, index) => {
+        return (
+          <VoteRow
+            address={this.props.address}
+            key={index}
+            id={index}
+            vote={vote}
+          />
+        );
+      });
   }
 
   render() {
