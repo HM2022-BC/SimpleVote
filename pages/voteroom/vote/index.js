@@ -24,13 +24,13 @@ class VoteIndex extends Component {
   }
 
   renderRows() {
-    return this.props.votes.sort((a, b) => Number(a.isFinalized) - Number(b.isFinalized))
-      .map((vote, index) => {
+    return this.props.votes.map((vote, index) => ({ ...vote, index })).sort((a, b) => Number(a.isFinalized) - Number(b.isFinalized))
+      .map(vote => {
         return (
           <VoteRow
             address={this.props.address}
-            key={index}
-            id={index}
+            key={vote.index}
+            id={vote.index}
             vote={vote}
           />
         );
