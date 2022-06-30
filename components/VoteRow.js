@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Button } from 'semantic-ui-react';
+import { Router } from '../routes';
 import web3 from '../ethereum/web3';
 import VoteRoom from '../ethereum/voteRoom';
 
@@ -14,16 +15,21 @@ class VoteRow extends Component {
 
     const accounts = await web3.eth.requestAccounts();
 
-    if (action === 'inFavor')
-      await vote.methods.voteInFavor(this.props.id).send({ from: accounts[0] });
-    else if (action === 'against')
-      await vote.methods.voteAgainst(this.props.id).send({ from: accounts[0] });
-    else if (action === 'abstain')
-      await vote.methods.voteAbstain(this.props.id).send({ from: accounts[0] });
-    else if (action === 'finalize')
-      await vote.methods.finalizeVote(this.props.id).send({ from: accounts[0] });
-
-    this.setState({ loading: false });
+    try {
+      if (action === 'inFavor')
+        await vote.methods.voteInFavor(this.props.id).send({ from: accounts[0] });
+      else if (action === 'against')
+        await vote.methods.voteAgainst(this.props.id).send({ from: accounts[0] });
+      else if (action === 'abstain')
+        await vote.methods.voteAbstain(this.props.id).send({ from: accounts[0] });
+      else if (action === 'finalize')
+        await vote.methods.finalizeVote(this.props.id).send({ from: accounts[0] });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.setState({ loading: false });
+      Router.pushRoute(`/voteroom/${this.props.address}/votes`);
+    }
   };
 
   render() {
