@@ -68,7 +68,6 @@ const VoteRoomOverview = () => {
           </Dimmer>
         </Card.Header>
       </Card.Content>
-
     </Card>
   );
 
