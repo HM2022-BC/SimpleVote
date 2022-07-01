@@ -1,41 +1,62 @@
-import React, { Component } from 'react';
-import { Card, Grid, Button } from 'semantic-ui-react';
+import React from 'react';
+import { Card, Grid, Button, Dimmer, Loader } from 'semantic-ui-react';
 import Layout from '../../components/Layout';
 import VoteRoom from '../../ethereum/voteRoom';
 import { Link } from '../../routes';
 
-class VoteRoomShow extends Component {
-  static async getInitialProps(props) {
-    const voteRoom = VoteRoom(props.query.address);
+const VoteRoomShow = (props) => {
+  const [state, setState] = React.useState({
+    address: '',
+    description: '',
+    voterCount: '',
+    voteNumber: '',
+    manager: '',
+    loading: false,
+    errorMessage: '',
+    votes: [],
+    openVotes: 0,
+    closedVotes: 0,
+  });
 
-    const description = await voteRoom.methods.voteRoomDescription().call();
-    const voterCount = await voteRoom.methods.voterCount().call();
-    const manager = await voteRoom.methods.manager().call();
-    const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
+  React.useEffect(() => {
+    setState({ ...state, loading: true });
+    const address = props.url.query.address;
+    const voteRoom = VoteRoom(address);
 
-    const votes = await Promise.all(
-      Array(parseInt(voteNumber))
-        .fill()
-        .map((_, index) => {
-          return voteRoom.methods.votes(index).call();
-        })
-    );
 
-    const openVotes = votes.filter(vote => vote.isFinalized === false);
-    const publicOpenVotes = openVotes.filter(vote => vote.isPublic === true);
+    const loadData = async (address, voteroom) => {
+      const description = await voteRoom.methods.voteRoomDescription().call();
+      const voterCount = await voteRoom.methods.voterCount().call();
+      const manager = await voteRoom.methods.manager().call();
+      const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
 
-    return {
-      address: props.query.address,
-      description,
-      manager,
-      voterCount,
-      voteNumber,
-      openVotes,
-      publicOpenVotes,
+      const votes = await Promise.all(
+        Array(parseInt(voteNumber))
+          .fill()
+          .map((_, index) => {
+            return voteRoom.methods.votes(index).call();
+          })
+      );
+
+      const openVotes = votes.filter(vote => vote.isFinalized === false);
+      const publicOpenVotes = openVotes.filter(vote => vote.isPublic === true);
+
+      setState({
+        loading: false,
+        address,
+        voteRoom,
+        description,
+        voterCount,
+        manager,
+        voteNumber,
+        openVotes: openVotes.length,
+        publicOpenVotes: publicOpenVotes.length,
+      });
     };
-  }
+    loadData(address, voteRoom);
+  }, []);
 
-  renderCards() {
+  const renderCards = () => {
     const {
       manager,
       description,
@@ -43,7 +64,7 @@ class VoteRoomShow extends Component {
       voteNumber,
       openVotes,
       publicOpenVotes,
-    } = this.props;
+    } = state;
 
     const items = [
       {
@@ -72,7 +93,7 @@ class VoteRoomShow extends Component {
           'Number of total votes.'
       },
       {
-        header: `${openVotes.length} (${publicOpenVotes.length} public)`,
+        header: `${openVotes} (${publicOpenVotes} public)`,
         meta: 'Open Votes',
         description:
           'Number of open votes.'
@@ -82,35 +103,40 @@ class VoteRoomShow extends Component {
     return <Card.Group items={items} />;
   }
 
-  render() {
-    return (
-      <Layout>
-        <h3>VoteRoom Show</h3>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column >{this.renderCards()}</Grid.Column>
-          </Grid.Row>
+  const renderLoading = () => (
+    <Dimmer active inverted>
+      <Loader inverted>Fetching Blockchain Data...</Loader>
+    </Dimmer>
+  );
 
-          <Grid.Row>
-            <Grid.Column>
-              <Link route={`/voteroom/${this.props.address}/votes`}>
-                <a>
-                  <Button primary>View Votes</Button>
-                </a>
-              </Link>
-            </Grid.Column>
-            <Grid.Column style={{ marginLeft: '20px' }}>
-              <Link route={`/voteroom/${this.props.address}/addvoters`}>
-                <a>
-                  <Button primary>Invite Voters</Button>
-                </a>
-              </Link>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Layout>
-    );
-  }
+  return (
+    <Layout>
+      <h3>VoteRoom Show</h3>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column >{state.loading ?
+            renderLoading()
+            : renderCards()}</Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <Link route={`/voteroom/${state.address}/votes`}>
+              <a>
+                <Button primary>View Votes</Button>
+              </a>
+            </Link>
+          </Grid.Column>
+          <Grid.Column style={{ marginLeft: '20px' }}>
+            <Link route={`/voteroom/${state.address}/addvoters`}>
+              <a>
+                <Button primary>Invite Voters</Button>
+              </a>
+            </Link>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    </Layout>
+  );
 }
 
 export default VoteRoomShow;

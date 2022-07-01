@@ -64,7 +64,7 @@ const VoteRoomOverview = () => {
       <Card.Content>
         <Card.Header textAlign='center'>
           <Dimmer active inverted>
-            <Loader inverted>Loading...</Loader>
+            <Loader inverted>Fetching Blockchain Data...</Loader>
           </Dimmer>
         </Card.Header>
       </Card.Content>
