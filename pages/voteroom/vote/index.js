@@ -89,14 +89,12 @@ const VoteIndex = (props) => {
         <Table celled selectable>
           <Header>
             <Row>
-              <HeaderCell>ID</HeaderCell>
-              <HeaderCell>Description</HeaderCell>
-              <HeaderCell>Minimum Votes</HeaderCell>
-              <HeaderCell>In Favor</HeaderCell>
-              <HeaderCell>Against</HeaderCell>
-              <HeaderCell>Abstained</HeaderCell>
-              <HeaderCell>Is Public</HeaderCell>
-              <HeaderCell>Actions</HeaderCell>
+              <HeaderCell textAlign='center'>ID</HeaderCell>
+              <HeaderCell textAlign='center'>Description</HeaderCell>
+              <HeaderCell textAlign='center'>Min. Votes</HeaderCell>
+              <HeaderCell textAlign='center'>Votes Yes/No/-</HeaderCell>
+              <HeaderCell textAlign='center'>Is Public</HeaderCell>
+              <HeaderCell textAlign='center'>Actions</HeaderCell>
             </Row>
           </Header>
           <Body>{renderRows()}</Body>

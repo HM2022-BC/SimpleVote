@@ -35,6 +35,7 @@ const VoteRow = (props) => {
   const { id, vote } = props;
   const readyToFinalize = parseInt(vote.inFavor) + parseInt(vote.against) + parseInt(vote.abstain) >= parseInt(vote.minimumVotes);
   const max = Math.max(parseInt(vote.inFavor), parseInt(vote.against), parseInt(vote.abstain));
+  const minVotesColor = readyToFinalize ? vote.isFinalized ? '' : 'green' : 'red';
 
   return (
     <Row
@@ -44,12 +45,15 @@ const VoteRow = (props) => {
     >
       <Cell>{id}</Cell>
       <Cell>{vote.description}</Cell>
-      <Cell style={{ color: readyToFinalize ? "green" : "red" }}>{vote.minimumVotes}</Cell>
-      <Cell style={{ color: max === parseInt(vote.inFavor) ? "green" : '' }}>{vote.inFavor}</Cell>
-      <Cell style={{ color: max === parseInt(vote.against) ? "red" : '' }}>{vote.against}</Cell>
-      <Cell style={{ color: max === parseInt(vote.abstain) ? "brown" : '' }}>{vote.abstain}</Cell>
-      <Cell>{vote.isPublic ? '✔️' : '❌'}</Cell>
+      <Cell style={{ color: minVotesColor }} textAlign='center'>{vote.minimumVotes}</Cell>
       <Cell>
+        <Cell style={{ color: max === parseInt(vote.inFavor) ? "green" : '' }}>{vote.inFavor}</Cell>
+        <Cell style={{ color: max === parseInt(vote.against) ? "red" : '' }}>{vote.against}</Cell>
+        <Cell style={{ color: max === parseInt(vote.abstain) ? "brown" : '' }}>{vote.abstain}</Cell>
+      </Cell>
+
+      <Cell textAlign='center'>{vote.isPublic ? '✔️' : '❌'}</Cell>
+      <Cell textAlign='center'>
         {vote.isFinalized ? null : (
           <Button.Group>
             <Button color="green" loading={loading} onClick={() => act('inFavor')}>
