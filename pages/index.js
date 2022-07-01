@@ -13,7 +13,7 @@ const VoteRoomOverview = () => {
   });
 
   React.useEffect(() => {
-    setState({ loading: true });
+    setState({ ...state, loading: true });
     async function loadVoteRooms() {
       const voteRooms = await factory.methods.getAllVoteRooms().call();
       const voteRoomsWithDetails = await Promise.all(
