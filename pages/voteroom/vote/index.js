@@ -50,7 +50,7 @@ class VoteIndex extends Component {
             </Button>
           </a>
         </Link>
-        <Table>
+        <Table celled selectable>
           <Header>
             <Row>
               <HeaderCell>ID</HeaderCell>

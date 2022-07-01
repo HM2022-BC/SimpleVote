@@ -36,6 +36,7 @@ class VoteRow extends Component {
     const { Row, Cell } = Table;
     const { id, vote } = this.props;
     const readyToFinalize = parseInt(vote.inFavor) + parseInt(vote.against) + parseInt(vote.abstain) >= parseInt(vote.minimumVotes);
+    const max = Math.max(parseInt(vote.inFavor), parseInt(vote.against), parseInt(vote.abstain));
 
     return (
       <Row
@@ -46,9 +47,9 @@ class VoteRow extends Component {
         <Cell>{id}</Cell>
         <Cell>{vote.description}</Cell>
         <Cell style={{ color: readyToFinalize ? "green" : "red" }}>{vote.minimumVotes}</Cell>
-        <Cell style={{ color: "green" }}>{vote.inFavor}</Cell>
-        <Cell style={{ color: "red" }}>{vote.against}</Cell>
-        <Cell style={{ color: "brown" }}>{vote.abstain}</Cell>
+        <Cell style={{ color: max === parseInt(vote.inFavor) ? "green" : '' }}>{vote.inFavor}</Cell>
+        <Cell style={{ color: max === parseInt(vote.against) ? "red" : '' }}>{vote.against}</Cell>
+        <Cell style={{ color: max === parseInt(vote.abstain) ? "brown" : '' }}>{vote.abstain}</Cell>
         <Cell>{vote.isPublic ? '✔️' : '❌'}</Cell>
         <Cell>
           {vote.isFinalized ? null : (
@@ -64,15 +65,19 @@ class VoteRow extends Component {
               <Button color="brown" loading={this.state.loading} onClick={() => this.act('abstain')}>
                 Abstain
               </Button>
+              {!vote.isFinalized && readyToFinalize ? (
+                <>
+                  <Button.Or />
+                  <Button color="teal" floated='right' loading={this.state.loading} onClick={() => this.act('finalize')} >
+                    Finalize
+                  </Button>
+                </>
+              ) : null}
             </Button.Group>
+
           )}
-          {!vote.isFinalized && readyToFinalize ? (
-            <Button color="teal" floated='right' loading={this.state.loading} onClick={() => this.act('finalize')}>
-              Finalize
-            </Button>
-          ) : null}
         </Cell>
-      </Row>
+      </Row >
     );
   }
 }
