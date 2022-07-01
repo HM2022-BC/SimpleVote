@@ -1,31 +1,41 @@
-import React, { Component } from 'react';
-import { Card, Button } from 'semantic-ui-react';
+import React from 'react';
+import { Card, Button, Dimmer, Loader } from 'semantic-ui-react';
 import VoteRoom from '../ethereum/voteRoom';
 import factory from '../ethereum/factory';
 import Layout from '../components/Layout';
 import { Link } from '../routes';
 
-class VoteRoomOverview extends Component {
-  static async getInitialProps() {
-    const voteRooms = await factory.methods.getAllVoteRooms().call();
-    const voteRoomsWithDetails = await Promise.all(
-      voteRooms.map(async address => {
-        const voteRoom = VoteRoom(address);
-        const description = await voteRoom.methods.voteRoomDescription().call();
-        const voterCount = await voteRoom.methods.voterCount().call();
-        const manager = await voteRoom.methods.manager().call();
-        const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
-        return { address, description, voterCount, manager, voteNumber };
-      })
-    );
+const VoteRoomOverview = () => {
+  const [state, setState] = React.useState({
+    voteRooms: [],
+    loading: false,
+    voteRoomsWithDetails: [],
+  });
 
-    return { voteRoomsWithDetails };
-  }
+  React.useEffect(() => {
+    setState({ ...state, loading: true });
+    async function loadVoteRooms() {
+      const voteRooms = await factory.methods.getAllVoteRooms().call();
+      const voteRoomsWithDetails = await Promise.all(
+        voteRooms.map(async address => {
+          const voteRoom = VoteRoom(address);
+          const description = await voteRoom.methods.voteRoomDescription().call();
+          const voterCount = await voteRoom.methods.voterCount().call();
+          const manager = await voteRoom.methods.manager().call();
+          const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
+          return { address, description, voterCount, manager, voteNumber };
 
-  renderVoteRooms() {
-    return this.props.voteRoomsWithDetails.map(({ address, description, voterCount, voteNumber }) => {
+        }));
+      setState({ loading: false, voteRoomsWithDetails, voteRooms });
+    }
+    loadVoteRooms();
+  }, []);
+
+
+  const renderVoteRooms = () => {
+    return state.voteRoomsWithDetails.map(({ address, description, voterCount, voteNumber }) => {
       return <Card raised={true} style={{ minWidth: '600px' }
-      } centered={true} >
+      } centered={true} key={address}>
         <Card.Content>
           <Card.Header textAlign='center'>{address}</Card.Header>
           <Card.Description textAlign='center'>{description}</Card.Description>
@@ -47,31 +57,41 @@ class VoteRoomOverview extends Component {
         </Card.Content>
       </Card >;
     });
-  }
+  };
 
-  render() {
-    return (
-      <Layout>
-        <div>
-          <h3>Open VoteRooms</h3>
+  const renderLoading = () => (
+    <Card raised={true} style={{ minWidth: '600px', minHeight: '170px' }} centered={true}>
+      <Card.Content>
+        <Card.Header textAlign='center'>
+          <Dimmer active inverted>
+            <Loader inverted>Fetching Blockchain Data...</Loader>
+          </Dimmer>
+        </Card.Header>
+      </Card.Content>
+    </Card>
+  );
 
-          <Link route="/voteroom/newvoteroom">
-            <a>
-              <Button
-                floated="right"
-                content="Create VoteRoom"
-                icon="add circle"
-                primary
-              />
-            </a>
-          </Link>
+  return (
+    <Layout>
+      <div>
+        <h3>Open VoteRooms</h3>
 
-          <Card.Group>
-            {this.renderVoteRooms()}
-          </Card.Group>
-        </div>
-      </Layout>
-    );
-  }
+        <Link route="/voteroom/newvoteroom">
+          <a>
+            <Button
+              floated="right"
+              content="Create VoteRoom"
+              icon="add circle"
+              primary
+            />
+          </a>
+        </Link>
+
+        <Card.Group>
+          {state.loading ? renderLoading() : renderVoteRooms()}
+        </Card.Group>
+      </div>
+    </Layout>
+  );
 }
 export default VoteRoomOverview;

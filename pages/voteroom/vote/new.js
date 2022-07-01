@@ -1,31 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Form, Button, Message, Input, Checkbox } from 'semantic-ui-react';
 import VoteRoom from '../../../ethereum/voteRoom';
 import web3 from '../../../ethereum/web3';
 import { Link, Router } from '../../../routes';
 import Layout from '../../../components/Layout';
 
-class NewVote extends Component {
-  state = {
+const NewVote = (props) => {
+  const [state, setState] = React.useState({
+    address: '',
     description: '',
     minimumVotes: 0,
+    errorMessage: '',
     isPublic: false,
-    errorMessage: ''
-  };
+    loading: false,
+  });
 
-  static async getInitialProps(props) {
-    const { address } = props.query;
+  React.useEffect(() => {
+    setState({ ...state, address: props.url.query.address });
+  }, []);
 
-    return { address };
-  }
-
-  onSubmit = async event => {
+  const onSubmit = async event => {
+    setState({ ...state, loading: true, errorMessage: '' });
     event.preventDefault();
 
-    const voteRoom = VoteRoom(this.props.address);
-    const { description, minimumVotes, isPublic } = this.state;
-
-    this.setState({ loading: true, errorMessage: '' });
+    const voteRoom = VoteRoom(state.address);
+    const { description, minimumVotes, isPublic } = state;
 
     try {
       const accounts = await web3.eth.requestAccounts();
@@ -33,58 +32,57 @@ class NewVote extends Component {
         .createVote(description, minimumVotes, isPublic)
         .send({ from: accounts[0] });
 
-      Router.pushRoute(`/voteroom/${this.props.address}/votes`);
+      Router.pushRoute(`/voteroom/${state.address}/votes`);
     } catch (err) {
-      this.setState({ errorMessage: err.message });
+      console.error(err);
+      setState({ ...state, errorMessage: err.message });
     }
 
-    this.setState({ loading: false });
+    setState({ ...state, loading: false });
   };
 
-  render() {
-    return (
-      <Layout>
-        <Link route={`/voteroom/${this.props.address}/votes`}>
-          <a>Back</a>
-        </Link>
-        <h3>Create a new Vote</h3>
-        <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage}>
-          <Form.Field>
-            <label>Description</label>
-            <Input
-              required
-              value={this.state.description}
-              onChange={event =>
-                this.setState({ description: event.target.value })}
-            />
-          </Form.Field>
+  return (
+    <Layout>
+      <Link route={`/voteroom/${state.address}/votes`}>
+        <a>Back</a>
+      </Link>
+      <h3>Create a new Vote</h3>
+      <Form onSubmit={onSubmit} error={!!state.errorMessage}>
+        <Form.Field>
+          <label>Description</label>
+          <Input
+            required
+            value={state.description}
+            onChange={event =>
+              setState({ ...state, description: event.target.value })}
+          />
+        </Form.Field>
 
-          <Form.Field>
-            <label>Minimum Amount of Voters</label>
-            <Input
-              value={this.state.minimumVotes}
-              onChange={event => this.setState({ minimumVotes: event.target.value })}
-            />
-          </Form.Field>
+        <Form.Field>
+          <label>Minimum Amount of Voters</label>
+          <Input
+            value={state.minimumVotes}
+            onChange={event => setState({ ...state, minimumVotes: event.target.value })}
+          />
+        </Form.Field>
 
-          <Form.Field>
-            <label>Publicly Accessible?</label>
-            <Checkbox
-              toggle
-              checked={this.state.isPublic}
-              onChange={event =>
-                this.setState({ isPublic: !this.state.isPublic })}
-            />
-          </Form.Field>
+        <Form.Field>
+          <label>Publicly Accessible?</label>
+          <Checkbox
+            toggle
+            checked={state.isPublic}
+            onChange={event =>
+              setState({ ...state, isPublic: !state.isPublic })}
+          />
+        </Form.Field>
 
-          <Message error header="Oops!" content={this.state.errorMessage} />
-          <Button primary loading={this.state.loading}>
-            Create!
-          </Button>
-        </Form>
-      </Layout>
-    );
-  }
+        <Message error header="Oops!" content={state.errorMessage} />
+        <Button primary loading={state.loading}>
+          Create!
+        </Button>
+      </Form>
+    </Layout>
+  );
 }
 
 export default NewVote;

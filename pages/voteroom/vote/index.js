@@ -1,74 +1,108 @@
-import React, { Component } from 'react';
-import { Button, Table } from 'semantic-ui-react';
+import React from 'react';
+import { Button, Table, Card, Dimmer, Loader } from 'semantic-ui-react';
 import { Link } from '../../../routes';
 import Layout from '../../../components/Layout';
 import VoteRoom from '../../../ethereum/voteRoom';
 import VoteRow from '../../../components/VoteRow';
 
-class VoteIndex extends Component {
-  static async getInitialProps(props) {
-    const { address } = props.query;
-    const voteRoom = VoteRoom(address);
-    const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
-    const managerAddress = await voteRoom.methods.manager().call();
+const VoteIndex = (props) => {
+  const [state, setState] = React.useState({
+    address: '',
+    votes: [],
+    voteRoom: {},
+    voteNumber: 0,
+    loading: true,
+    errorMessage: '',
+  });
 
-    const votes = await Promise.all(
-      Array(parseInt(voteNumber))
-        .fill()
-        .map((_, index) => {
-          return voteRoom.methods.votes(index).call();
-        })
-    );
+  React.useEffect(() => {
+    const getData = async () => {
+      const address = props.url.query.address;
+      const voteRoom = VoteRoom(address);
+      const voteNumber = await voteRoom.methods.getNumberOfVotes().call();
+      const managerAddress = await voteRoom.methods.manager().call();
 
-    return { address, votes, voteRoom, voteNumber, managerAddress };
-  }
+      const votes = await Promise.all(
+        Array(parseInt(voteNumber))
+          .fill()
+          .map((_, index) => {
+            return voteRoom.methods.votes(index).call();
+          })
+      );
+      setState({
+        ...state,
+        loading: false,
+        address,
+        voteRoom,
+        voteNumber,
+        managerAddress,
+        votes,
+      });
+    };
+    getData();
+  }, [state.loading]);
 
-  renderRows() {
-    return this.props.votes.map((vote, index) => ({ ...vote, index })).sort((a, b) => Number(a.isFinalized) - Number(b.isFinalized))
+  const rerender = () => {
+    setState({ ...state, loading: true });
+  };
+
+  const renderRows = () => {
+    return state.votes.map((vote, index) => ({ ...vote, index })).sort((a, b) => Number(a.isFinalized) - Number(b.isFinalized))
       .map(vote => {
         return (
           <VoteRow
-            address={this.props.address}
+            address={state.address}
             key={vote.index}
             id={vote.index}
             vote={vote}
+            rerender={rerender}
           />
         );
       });
-  }
+  };
 
-  render() {
-    const { Header, Row, HeaderCell, Body } = Table;
+  const renderLoading = () => (
+    <Card raised={true} style={{ minWidth: '600px', minHeight: '170px' }} centered={true}>
+      <Card.Content>
+        <Card.Header textAlign='center'>
+          <Dimmer active inverted>
+            <Loader inverted>Fetching Blockchain Data...</Loader>
+          </Dimmer>
+        </Card.Header>
+      </Card.Content>
+    </Card>
+  )
 
-    return (
-      <Layout>
-        <h3>Votes</h3>
-        <Link route={`/voteroom/${this.props.address}/votes/new`}>
-          <a>
-            <Button primary floated="right" style={{ marginBottom: 10 }}>
-              Add Vote
-            </Button>
-          </a>
-        </Link>
-        <Table>
+  const { Header, Row, HeaderCell, Body } = Table;
+
+  return (
+    <Layout>
+      <h3>Votes</h3>
+      <Link route={`/voteroom/${state.address}/votes/new`}>
+        <a>
+          <Button primary floated="right" style={{ marginBottom: 10 }}>
+            Add Vote
+          </Button>
+        </a>
+      </Link>
+      {state.loading ? renderLoading() :
+        <Table celled selectable>
           <Header>
             <Row>
-              <HeaderCell>ID</HeaderCell>
-              <HeaderCell>Description</HeaderCell>
-              <HeaderCell>Minimum Votes</HeaderCell>
-              <HeaderCell>In Favor</HeaderCell>
-              <HeaderCell>Against</HeaderCell>
-              <HeaderCell>Abstained</HeaderCell>
-              <HeaderCell>Is Public</HeaderCell>
-              <HeaderCell>Actions</HeaderCell>
+              <HeaderCell textAlign='center'>ID</HeaderCell>
+              <HeaderCell textAlign='center'>Description</HeaderCell>
+              <HeaderCell textAlign='center'>Min. Votes</HeaderCell>
+              <HeaderCell textAlign='center'>Votes Yes/No/-</HeaderCell>
+              <HeaderCell textAlign='center'>Is Public</HeaderCell>
+              <HeaderCell textAlign='center'>Actions</HeaderCell>
             </Row>
           </Header>
-          <Body>{this.renderRows()}</Body>
+          <Body>{renderRows()}</Body>
         </Table>
-        <div>Found {this.props.voteNumber} votes.</div>
-      </Layout>
-    );
-  }
+      }
+      <div>Found {state.voteNumber} votes.</div>
+    </Layout>
+  );
 }
 
 export default VoteIndex;
