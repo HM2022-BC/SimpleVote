@@ -55,7 +55,7 @@ const InviteVoter = (props) => {
           <Input
             value={state.newVoters}
             onChange={event =>
-              setState({ newVoters: event.target.value.split(',') })}
+              setState({ ...state, newVoters: event.target.value.split(',') })}
             label="Addresses"
             labelPosition="left"
             placeholder="0x... , 0x..."
