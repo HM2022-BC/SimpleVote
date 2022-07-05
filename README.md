@@ -10,23 +10,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/Pyxels/SimpleVote">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">SimpleVote</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Secure and verifiable voting powered by blockchain.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Pyxels/SimpleVote"><strong>Explore the repo »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/Pyxels/SimpleVote">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/Pyxels/SimpleVote/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/Pyxels/SimpleVote/issues">Request Feature</a>
   </p>
 </div>
 
@@ -71,9 +71,7 @@ The owner of a VoteRoom can create private votes in which only the invited voter
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
-- kNext.js](https://nextjs.org/)
+- [Next.js](https://nextjs.org/)
 - [React.js](https://reactjs.org/)
 - [Ethereum](https://ethereum.org/en/)
 - [Node.js](https://nodejs.org/en/)
@@ -91,8 +89,6 @@ This section should list any major frameworks/libraries used to bootstrap your p
 ## Getting Started
 
 ### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
 
 - npm
 - [Node.js](https://nodejs.org/en/)
@@ -129,15 +125,15 @@ node server.js
 ## Usage
 
 1. The home page is an overview over all rooms with some basic stats, like invited users and amount of votes.
-![All Rooms][all-rooms]
+   ![All Rooms][all-rooms]
 2. Clicking on the `Create VoteRoom` button takes you to the creation view.
-![Create new Room][new-room]
+   ![Create new Room][new-room]
 3. Looking at a specific room, you can see alot of details.
-![Room Details][room-overview]
+   ![Room Details][room-overview]
 4. Looking at the votes for a room, you can see a list with buttons/actions to take.
-![Votes Overview][votes-overview]
+   ![Votes Overview][votes-overview]
 5. The manager can also crate a new vote by clicking `Add Vote`.
-![New Vote][new-vote]
+   ![New Vote][new-vote]
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -150,12 +146,11 @@ node server.js
 - [ ] Easier site navigation
 - [ ] Dark theme
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Pyxels/SimpleVote/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Contact
-
 
 Project Link: [https://github.com/Pyxels/SimpleVote](https://github.com/Pyxels/SimpleVote)
 
